@@ -1,9 +1,9 @@
-package io.github.moreirasantos.testutils
+package io.github.moreirasantos.knooq.testutils
 
-import io.github.moreirasantos.Field
-import io.github.moreirasantos.Record
-import io.github.moreirasantos.SQLDataType
-import io.github.moreirasantos.Table
+import io.github.moreirasantos.knooq.Field
+import io.github.moreirasantos.knooq.Record
+import io.github.moreirasantos.knooq.SQLDataType
+import io.github.moreirasantos.knooq.Table
 import kotlinx.serialization.Serializable
 
 private fun <T> identity(x: T): T = x

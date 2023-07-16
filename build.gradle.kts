@@ -13,20 +13,28 @@ plugins {
 }
 
 group = "io.github.moreirasantos"
-version = "1.0.0"
+version = "1.0.1"
 
 repositories {
     mavenCentral()
 }
 kotlin {
-    val hostOs = System.getProperty("os.name")
-    val isMingwX64 = hostOs.startsWith("Windows")
-    val nativeTarget = when {
-        hostOs == "Mac OS X" -> macosX64("native")
-        hostOs == "Linux" -> linuxX64("native")
-        isMingwX64 -> mingwX64("native")
-        else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
-    }
+    // Tiers are in accordance with <https://kotlinlang.org/docs/native-target-support.html>
+    // Tier 1
+    linuxX64()
+    /*
+    // Currently unsupported
+    // Tier 2
+    linuxArm64("linuxArm64")
+    // Tier 3
+    mingwX64("mingwX64")
+
+    // Tier 1
+    macosX64("macosX64")
+    macosArm64("macosArm64")
+    */
+
+    // android, ios, watchos, tvos, jvm, js will never(?) be supported
 
     sourceSets {
         val commonMain by getting {
@@ -34,7 +42,8 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.5.1")
-                implementation("io.github.moreirasantos:pgkn:1.0.0")
+                implementation("io.github.moreirasantos:pgkn:1.0.1")
+                implementation("io.github.oshai:kotlin-logging:5.0.0-beta-04")
             }
         }
         val commonTest by getting
@@ -82,7 +91,7 @@ val remove by tasks.registering(DockerRemoveContainer::class) {
 }
 
 tasks {
-    val nativeTest by getting {
+    val linuxX64Test by getting {
         dependsOn(start)
         finalizedBy(remove)
     }
@@ -105,8 +114,8 @@ tasks.withType<Detekt>().configureEach {
     }
 }
 
-tasks{
-    val publishNativePublicationToSonatypeRepository by getting {
+tasks {
+    val publishLinuxX64PublicationToSonatypeRepository by getting {
         // Explicit dependency because gradle says it's implicit and fails build
         dependsOn("signKotlinMultiplatformPublication")
     }

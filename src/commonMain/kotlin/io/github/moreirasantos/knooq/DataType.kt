@@ -1,4 +1,4 @@
-package io.github.moreirasantos
+package io.github.moreirasantos.knooq
 
 import kotlin.reflect.KClass
 

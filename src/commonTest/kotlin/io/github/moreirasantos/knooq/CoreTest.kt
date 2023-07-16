@@ -1,8 +1,8 @@
-package io.github.moreirasantos
+package io.github.moreirasantos.knooq
 
-import io.github.miguelmoreira.pgkn.PostgresDriver
-import io.github.moreirasantos.testutils.User
-import io.github.moreirasantos.testutils.UserTable
+import io.github.moreirasantos.pgkn.PostgresDriver
+import io.github.moreirasantos.knooq.testutils.User
+import io.github.moreirasantos.knooq.testutils.UserTable
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertContains
