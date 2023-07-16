@@ -1,7 +1,8 @@
-package io.github.moreirasantos
+package io.github.moreirasantos.knooq
 
-import io.github.miguelmoreira.pgkn.PostgresDriver
+import io.github.moreirasantos.pgkn.PostgresDriver
 
+private val logger = KLogger("io.github.moreirasantos.knooq.CoreKt")
 
 class Config(val driver: PostgresDriver)
 class Database(driver: PostgresDriver) {
@@ -99,6 +100,7 @@ sealed class Query(private val config: Config) {
             // TODO
             append(" from ${from.first().name}")
         }
+        logger.debug { "Executing: $sql" }
 
         result = config.driver.execute(sql) {
             Record.DbRecord(

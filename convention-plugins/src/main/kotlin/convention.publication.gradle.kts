@@ -92,6 +92,6 @@ signing {
 tasks{
     val publishKotlinMultiplatformPublicationToSonatypeRepository by getting {
         // Explicit dependency because gradle says it's implicit and fails build
-        dependsOn("signNativePublication")
+        dependsOn("signLinuxX64Publication")
     }
 }
