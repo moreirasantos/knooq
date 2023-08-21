@@ -42,8 +42,8 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.5.1")
-                implementation("io.github.moreirasantos:pgkn:1.0.1")
-                implementation("io.github.oshai:kotlin-logging:5.0.0-beta-04")
+                implementation("io.github.moreirasantos:pgkn:1.0.2")
+                implementation("io.github.oshai:kotlin-logging:5.0.1")
             }
         }
         val commonTest by getting

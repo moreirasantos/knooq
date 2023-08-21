@@ -1,5 +1,8 @@
 package io.github.moreirasantos.knooq
 
+import io.github.moreirasantos.knooq.Keywords.K_SELECT
+import io.github.moreirasantos.knooq.context.Context
+import io.github.moreirasantos.knooq.context.renderContext
 import io.github.moreirasantos.pgkn.PostgresDriver
 
 private val logger = KLogger("io.github.moreirasantos.knooq.CoreKt")
@@ -90,17 +93,21 @@ sealed class Query(private val config: Config) {
         limit.setNumberOfRows(numberOfRows)
     }
 
-    private suspend fun execute(): Int {
-        // A super simple render for now
+    private fun execute(): Int {
+        val renderContext = renderContext {
+            K_SELECT.accept(this)
+            separatorRequired(true)
+            declareFields(true)
 
-        val sql = buildString {
-            append("select ")
-            // TODO Default value is bad, let's make name non-nullable in some way
-            append(fields.joinToString(separator = ", ", transform = { it.name ?: "" }))
+            SelectFieldList(fields).accept(this)
+
             // TODO
-            append(" from ${from.first().name}")
+            sql.append(" from ${from.first().name}")
         }
+
+        val sql = renderContext.sql.toString()
         logger.debug { "Executing: $sql" }
+        println("Executing: $sql")
 
         result = config.driver.execute(sql) {
             Record.DbRecord(
@@ -139,7 +146,7 @@ sealed interface Table<out R : Record> {
 }
 
 open class Field<T : Any>(
-    val name: String?,
+    val name: String,
     val dataType: DataType<T>,
     private val converter: (String) -> T
 ) {
@@ -154,11 +161,22 @@ open class TableField<R : Record, T : Any>(
     val table: Table<R>
 ) : Field<T>(name, dataType, converter)
 
-open class Param<T : Any>(val value: T, name: String?, dataType: DataType<T>) : Field<T>(name, dataType, { it as T }) {
+open class Param<T : Any>(val value: T, name: String, dataType: DataType<T>) : Field<T>(name, dataType, { it as T }) {
     var inline: Boolean = false
 }
 
-class Val<T : Any>(value: T, dataType: DataType<T>, name: String?) : Param<T>(value, name, dataType)
+class Val<T : Any>(value: T, dataType: DataType<T>, name: String = "") : Param<T>(value, name, dataType)
+
+internal class SelectFieldList(fields: List<Field<*>>) : List<Field<*>> by ArrayList(fields) {
+
+    /**
+     * See QueryPartCollectionView.accept() for full logic
+     */
+    fun accept(ctx: Context<*>) {
+        if (ctx.separatorRequired) ctx.sql(' ')
+        ctx.sql(joinToString(separator = ", ", transform = Field<*>::name), true)
+    }
+}
 
 sealed interface Record {
     val fields: List<Field<*>>
@@ -191,10 +209,13 @@ object DSL {
 
     @Suppress("FunctionNaming")
     fun <T : Any> `val`(value: Any, field: Field<T>) = `val`(value, field.dataType)
-    @Suppress("FunctionNaming")
-    fun <T : Any> `val`(value: Any, type: DataType<T>) = Val(type.convert(value), type, null)
 
-    fun <T : Any> inline(value: Any, type: DataType<T>) = Val(type.convert(value), type, null).apply {
+    @Suppress("FunctionNaming")
+    fun <T : Any> `val`(value: Any, type: DataType<T>) = Val(type.convert(value), type)
+
+    fun <T : Any> inline(value: Any, type: DataType<T>) = Val(type.convert(value), type).apply {
         this.inline = true
     }
+
+    fun keyword(keyword: String) = Keyword(keyword)
 }
