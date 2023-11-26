@@ -5,7 +5,7 @@ import com.bmuschko.gradle.docker.tasks.image.DockerPullImage
 import io.gitlab.arturbosch.detekt.Detekt
 
 plugins {
-    val kotlinVersion = "1.9.0"
+    val kotlinVersion = "1.9.21"
     kotlin("multiplatform") version kotlinVersion
     id("com.bmuschko.docker-remote-api") version "6.7.0"
     id("io.gitlab.arturbosch.detekt").version("1.23.0")
@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "io.github.moreirasantos"
-version = "1.0.1"
+version = "1.0.2"
 
 repositories {
     mavenCentral()
@@ -42,7 +42,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.5.1")
-                implementation("io.github.moreirasantos:pgkn:1.0.1")
+                implementation("io.github.moreirasantos:pgkn:1.1.0")
                 implementation("io.github.oshai:kotlin-logging:5.0.0-beta-04")
             }
         }
